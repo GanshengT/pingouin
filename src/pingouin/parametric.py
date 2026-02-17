@@ -1732,10 +1732,14 @@ def ancova(data=None, dv=None, between=None, covar=None, effsize="np2"):
     # Add effect sizes
     if effsize == "n2":
         all_effsize = (aov["SS"] / aov["SS"].sum()).to_numpy(copy=True)
+        # Some pandas/numpy combos can return a read-only view; make a writable copy
+        all_effsize = np.array(all_effsize, copy=True)
         all_effsize[-1] = np.nan
     else:
         ss_resid = aov["SS"].iloc[-1]
         all_effsize = aov["SS"].apply(lambda x: x / (x + ss_resid)).to_numpy(copy=True)
+        # Some pandas/numpy combos can return a read-only view; make a writable copy
+        all_effsize = np.array(all_effsize, copy=True)
         all_effsize[-1] = np.nan
     aov[effsize] = all_effsize
 
